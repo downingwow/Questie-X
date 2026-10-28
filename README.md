@@ -1,31 +1,27 @@
-# Questie-X
+# Questie-X — Conquest of Azeroth
 
-Quest tracking, discovery learning, and shared quest information.
+A quest-helper adaptation for **Ascension: Conquest of Azeroth / Conquest Reborn**, based on Questie and customized for the legacy WoW client (Interface 30300).
 
-An addon for **Ascension: Conquest of Azeroth** on Conquest Reborn. Maintained by Uncle Bone.
+## Features
 
-## Download
+- Quest objective, NPC, and object guidance on world maps and the minimap, using Questie's quest-helper interface.
+- Quest log and journey tracking, searchable quest information, and database-driven quest locations.
+- **Questie Learner** records quest discoveries and persists them in `QuestieLearnerDB`.
+- Imported learner data and Ascension-specific quest/database adaptations.
+- Performance-focused fixes to reduce stutter and improve map-zoom behavior on the legacy client.
+- Cooperative discovery synchronization using LootCollector's existing `BBLC25C` chat channel and a Questie-specific message protocol; channel joining is delayed to avoid startup conflicts.
+- Compatibility patches for older game APIs and libraries.
 
-[Latest stable release](https://github.com/robsdow87/Questie-X/releases/latest) · [Previous versions](https://github.com/robsdow87/Questie-X/releases)
+## Current source package
 
-**No release has been published yet.** Current source files must be verified before the first release.
+**Patch 11 — Safe Channel Startup** is the most recent available build. This repository does **not yet contain the addon source or a published release**; the package must be uploaded before the download link works.
 
 ## Installation
 
-1. Download the ZIP attached to a published GitHub Release (not the automatic GitHub source archive).
-2. Extract into your World of Warcraft `Interface/AddOns` directory.
-3. Ensure the `Questie-X` folder contains its `.toc` file; restart the game.
+After the first release is published, download its attached ZIP, extract the `Questie-X` folder to `Interface/AddOns`, and restart the game. Avoid GitHub's automatically generated source archive if it does not include a packaged addon.
 
-## Compatibility
+## Downloads and support
 
-Built for the legacy client used by Ascension: Conquest of Azeroth. Questie-X, DBM-CoA, and LootCollector use LootCollector's existing shared channel `BBLC25C`, with distinct message protocols. Preserve compatibility with older clients and addon versions when updating.
+[Releases](https://github.com/downingwow/Questie-X/releases) · [Issues](https://github.com/downingwow/Questie-X/issues) · [Changelog](CHANGELOG.md)
 
-## Feedback
-
-[Report bugs and request features](https://github.com/robsdow87/Questie-X/issues). Include addon version, client version, error text, and steps to reproduce.
-
-## Release process
-
-When verified addon source is present in `Questie-X/`, pushing a version tag such as `v1.0.0` triggers the release workflow to validate the folder and package it as a downloadable ZIP. Earlier tagged releases remain accessible.
-
-See [CHANGELOG.md](CHANGELOG.md) for release history.
+**Credits:** Questie Team and upstream contributors; Conquest of Azeroth adaptation maintained by Uncle Bone. This is a community project, not an official Ascension addon.
