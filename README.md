@@ -35,7 +35,7 @@ The CoA patches include work on older-client API compatibility, map zoom/pin beh
 
 ## Important: database plugins are required
 
-**Questie-X is a quest-helper engine, not a complete bundled quest database.** Its upstream installation documentation says it requires **Questie-X-WotLKDB** plus **Questie-X-AscensionDB** for Ascension. These database plugins are **not included in the current Questie-X ZIP**. Install the matching versions separately, alongside the `Questie-X` folder. Without a loaded database, quest pins and quest information will be incomplete or unavailable.
+**Questie-X is a quest-helper engine, not a complete bundled quest database.** Its upstream installation documentation says it requires **Questie-X-WotLKDB** plus **Questie-X-AscensionDB** for Ascension. The maintainer's GitHub upload now includes additional Questie-X database folders alongside the main addon. Install the database addon folders included with the GitHub source or release alongside the `Questie-X` folder. Without a loaded database, quest pins and quest information will be incomplete or unavailable.
 
 See the upstream [Questie-X project](https://github.com/Xurkon/Questie-X) and its database-plugin documentation for those components. Do not install an old Questie variant simultaneously.
 
@@ -50,7 +50,7 @@ If you are updating from an older incompatible Questie fork, remove the old addo
 
 ## Current build and downloads
 
-**Latest package located:** *Questie-X CoA Patch 11 — Safe Channel Startup*. The package exists in the project maintainer's archive but **has not yet been uploaded to this repository or published as a GitHub Release**. [Releases](https://github.com/downingwow/Questie-X/releases) will contain verified downloadable builds once published.
+**Latest package located:** *Questie-X CoA Patch 11 — Safe Channel Startup*. The source folders, including database addons, have now been uploaded to this repository. **A downloadable GitHub Release has not yet been published.** [Releases](https://github.com/downingwow/Questie-X/releases) will contain verified downloadable builds once published.
 
 ## Known limits / status
 
