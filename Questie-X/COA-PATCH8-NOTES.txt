@@ -1,0 +1,1 @@
+Patch 8: Learner sharing ON by default. Join questiecomm only when channel capacity allows; reserve two channel slots for DBM and LootCollector. Never remove/reassign chat channels. WoW channel numbering may still change when joining a new channel. Does not modify DBM or LootCollector.

@@ -1,0 +1,1 @@
+Patch 6: Coalesced BAG_UPDATE_DELAYED full quest log scans (0.3s trailing debounce and 2s follow-up retained), preserving Patch 5 map zoom fix. Experimental.

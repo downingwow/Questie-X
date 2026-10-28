@@ -1,0 +1,1 @@
+Experimental map pin corrections: remove duplicate scale in HBD coordinates; use consistent WorldMapButton parenting and clipping. Learner export is included as Questie-Learner-Import.txt for in-game import (not automatically merged). Other requested features are not yet fixed. Back up SavedVariables.

@@ -1,0 +1,1 @@
+Patch 7: Public Learner channel OFF by default, no automatic permanent channel join or chat frame manipulation. Optional Advanced setting enables public sharing only after manually joining questiecomm. Normal local learning unaffected. Legacy global QuestieComms channel send disabled. Keep DBMCoASync separate. Existing SavedVariables retained.
