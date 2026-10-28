@@ -23,7 +23,8 @@ jobs:
           mkdir -p dist
           case "$REPO" in
             Questie-X)
-              dirs=(Questie-X)
+              mapfile -t dirs < <(find . -maxdepth 1 -type d -name 'Questie-X*' -printf '%f\n' | sort)
+              test -d Questie-X || { echo "::error::Missing Questie-X"; exit 1; }
               ;;
             LootCollector)
               dirs=(LootCollector LootCollector_CustomImport LootCollector_StarterDB)
