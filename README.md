@@ -50,7 +50,7 @@ If you are updating from an older incompatible Questie fork, remove the old addo
 
 ## Current build and downloads
 
-**Latest package located:** *Questie-X CoA Patch 11 — Safe Channel Startup*. The source folders, including database addons, have now been uploaded to this repository. **A downloadable GitHub Release has not yet been published.** [Releases](https://github.com/downingwow/Questie-X/releases) will contain verified downloadable builds once published.
+**Current source build: v1.0.0.** CoA baseline with HBD map-data fix. Installable ZIPs and version history are published through [GitHub Releases](https://github.com/downingwow/Questie-X/releases).
 
 ## Known limits / status
 
@@ -64,3 +64,8 @@ If you are updating from an older incompatible Questie fork, remove the old addo
 Based on [Questie](https://github.com/Questie/Questie) and [Questie-X](https://github.com/Xurkon/Questie-X), with their original authors and contributors retaining credit. CoA adaptation and distribution by **Uncle Bone**. Community project; not an official Ascension addon.
 
 [Report a bug / suggest a feature](https://github.com/downingwow/Questie-X/issues) · [Changelog](CHANGELOG.md)
+
+
+## CoA v1.0.0
+
+CoA release numbering is separate from the upstream Questie-X version. Includes the Patch 12 HBD map-data compatibility fix and existing learner/sharing work. The release includes database plugin folders already maintained in this repository.

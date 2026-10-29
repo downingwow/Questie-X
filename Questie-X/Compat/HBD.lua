@@ -140,6 +140,16 @@ f:SetScript("OnEvent", function(self, event)
     self:UnregisterEvent(event)
 end)
 
+-- Some Conquest custom map IDs contain nested tables rather than HBD's
+-- expected numeric {width,height,left,top}. Never do arithmetic on them.
+local function ValidMapBounds(data)
+    return type(data) == "table"
+       and type(data[1]) == "number" and data[1] > 0
+       and type(data[2]) == "number" and data[2] > 0
+       and type(data[3]) == "number"
+       and type(data[4]) == "number"
+end
+
 --- Convert local/point coordinates to world coordinates in yards
 --- @param x X position in 0-1 point coordinates
 --- @param y Y position in 0-1 point coordinates
@@ -150,7 +160,7 @@ function HBD:GetWorldCoordinatesFromZone(x, y, zone)
     -- Sunstrider coordinate space. Both convert through their own bounds —
     -- no redirect needed here because _ResolveMapUiMapId passes 1241 through.
     local data = mapData[zone]
-    if not data or data[1] == 0 or data[2] == 0 then
+    if not ValidMapBounds(data) then
         -- Attempt to lazy-load the real HBD if we haven't yet
         if not RealHBD then
             pcall(function() RealHBD = LoadRealHBD() end)
@@ -158,7 +168,7 @@ function HBD:GetWorldCoordinatesFromZone(x, y, zone)
         if RealHBD and RealHBD.mapData then
             data = RealHBD.mapData[zone]
         end
-        if not data or data[1] == 0 or data[2] == 0 then
+        if not ValidMapBounds(data) then
             return nil, nil, nil
         end
     end
@@ -180,14 +190,14 @@ function HBD:GetZoneCoordinatesFromWorld(x, y, zone, allowOutOfBounds)
     -- mapData[1241] has its own calibrated bounds matching the engine's space.
     -- No redirect needed — callers pass the correct zone directly.
     local data = mapData[zone]
-    if not data or data[1] == 0 or data[2] == 0 then
+    if not ValidMapBounds(data) then
         if not RealHBD then
             pcall(function() RealHBD = LoadRealHBD() end)
         end
         if RealHBD and RealHBD.mapData then
             data = RealHBD.mapData[zone]
         end
-        if not data or data[1] == 0 or data[2] == 0 then
+        if not ValidMapBounds(data) then
             return nil, nil
         end
     end
@@ -209,7 +219,7 @@ end
 -- @param allowOutOfBounds Allow coordinates to go beyond the current map (ie. outside of the 0-1 range), otherwise nil will be returned
 function HBD:GetAzerothWorldMapCoordinatesFromWorld(x, y, instance, allowOutOfBounds)
     local data = worldMapData[instance]
-    if not data or data[1] == 0 or data[2] == 0 then return nil, nil end
+    if not ValidMapBounds(data) then return nil, nil end
     if not x or not y then return nil, nil end
 
     local width, height, left, top = data[1], data[2], data[3], data[4]

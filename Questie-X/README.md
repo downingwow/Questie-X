@@ -1,4 +1,4 @@
-> **Notice:** This is a maintenance release, not the completed performance refactor. The performance refactor is still in progress on the `phase2-lua50-sweep` branch. This release (v1.6.4) contains bug fixes and improvements over v1.6.3 and should be more stable, but the full performance work will land in a future release. If you are currently on v1.6.3, this release is a recommended upgrade.
+> **CoA fork maintainer:** Uncle Bone · [downingwow/Questie-X](https://github.com/downingwow/Questie-X) · CoA v1.0.0. Upstream Questie-X credits and links below are retained where applicable.\n\n> **Notice:** This is a maintenance release, not the completed performance refactor. The performance refactor is still in progress on the `phase2-lua50-sweep` branch. This release (v1.6.4) contains bug fixes and improvements over v1.6.3 and should be more stable, but the full performance work will land in a future release. If you are currently on v1.6.3, this release is a recommended upgrade.
 
 > Current refactor focus: reducing QuestieLearner pin redraws during heavy kill activity, adding live Advanced performance controls for QuestieLearner and QuestieComms, adding Arrow throttles for low-end systems, and suppressing non-fatal error spam outside Questie debug modes. These changes are being staged on feature branches first and still need in-game validation before they become the next stable release.
 
@@ -7,7 +7,7 @@
 <img src="docs/QuestieXlogo.png" alt="Questie-X Logo" width="320" />
 
 ![Version](https://img.shields.io/badge/Questie--X-v1.6.4-blue.svg?style=for-the-badge)
-[![Downloads](https://img.shields.io/github/downloads/Xurkon/Questie-X/total?style=for-the-badge&color=e67e22)](https://github.com/Xurkon/Questie-X/releases)
+[![Downloads](https://img.shields.io/github/downloads/Xurkon/Questie-X/total?style=for-the-badge&color=e67e22)](https://github.com/downingwow/Questie-X/releases)
 [![Documentation](https://img.shields.io/badge/Documentation-View%20Docs-58a6ff?style=for-the-badge)](https://xurkon.github.io/Questie-X/)
 [![Patreon](https://img.shields.io/badge/Patreon-F96854?style=for-the-badge&logo=patreon&logoColor=white)](https://www.patreon.com/Xurkon)
 [![PayPal](https://img.shields.io/badge/PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.me/Xurkon)
@@ -17,7 +17,7 @@
 
 **A universal WoW quest-helper with a plugin architecture for any private server.**
 
-[Download Latest](https://github.com/Xurkon/Questie-X/releases/latest) &nbsp;&bull;&nbsp; [View Source](https://github.com/Xurkon/Questie-X) &nbsp;&bull;&nbsp; [Documentation](https://xurkon.github.io/Questie-X/)
+[Download Latest](https://github.com/downingwow/Questie-X/releases/latest) &nbsp;&bull;&nbsp; [View Source](https://github.com/downingwow/Questie-X) &nbsp;&bull;&nbsp; [Documentation](https://xurkon.github.io/Questie-X/)
 
 </div>
 
@@ -63,7 +63,7 @@ Before the next stable release, the combined branch needs in-game testing in hea
 
 ### Step 1 — Install Questie-X Core
 
-1. [Download](https://github.com/Xurkon/Questie-X/releases/latest) the latest `Questie-X` release `.zip`.
+1. [Download](https://github.com/downingwow/Questie-X/releases/latest) the latest `Questie-X` release `.zip`.
 2. Extract the archive — you will get a folder named `Questie-X`.
 3. Move that folder into your `Interface/AddOns/` directory:
    ```
