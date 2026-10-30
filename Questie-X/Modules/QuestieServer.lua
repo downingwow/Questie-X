@@ -22,7 +22,7 @@ Questie.IsEbonhold  = false
 Questie.IsAscension = false
 Questie.IsValanior  = false
 
-if (_G.IsAscensionServer or _G.C_CharacterAdvancement) or lRealmName:find("ascension") or lRealmName:find("area 52") or
+if _G.IsAscensionServer or lRealmName:find("ascension") or lRealmName:find("area 52") or
    lRealmName:find("al'ar") or lRealmName:find("thrall") or lRealmName:find("bronzebeard") or lRealmName:find("warcraft reborn") then
     Questie.IsAscension = true
 elseif lRealmName:find("ebonhold") then

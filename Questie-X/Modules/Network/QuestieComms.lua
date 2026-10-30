@@ -1083,8 +1083,7 @@ function _QuestieComms:Broadcast(packet)
         local compressedData = QuestieSerializer:Serialize(packet);
         Questie:Debug(Questie.DEBUG_COMMS,"send(|cFFFF2222", string.len(compressedData), "|r)")
         -- Always do channel messages as BULK priority
-        -- Legacy global channel broadcasts are disabled; group/whisper sharing is unaffected.
-        -- Do not auto-join or send to public chat channels.
+        Questie:SendCommMessage(_QuestieComms.prefix, compressedData, packetWriteMode, GetChannelName("questiecom"), "BULK")
         --OLD: C_ChatInfo.SendAddonMessage("questie", compressedData, "CHANNEL", GetChannelName("questiecom"))
     elseif packetWriteMode == _QuestieComms.QC_WRITE_YELL then
         packet.msgVer = nil

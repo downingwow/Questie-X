@@ -10,52 +10,7 @@ local AceSerializer = LibStub("AceSerializer-3.0")
 local AceComm = LibStub("AceComm-3.0")
 
 local addonPrefix = "QuestieLearner"
--- Shared BBLC25C membership is cooperative: each addon can join if needed.
--- Never leave, renumber, or alter chat frame subscriptions.
-local hiddenChannelName = "BBLC25C"
-local lastJoinAttempt = -100
-local joinCooldown = 30
-local loginReadyAt = nil
--- Never claim /1 during login. Fail closed until a normal channel occupies /1.
-local startupFrame = CreateFrame("Frame")
-startupFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-startupFrame:SetScript("OnEvent", function()
-    loginReadyAt = GetTime() + 35
-end)
-local function SafeToJoin()
-    if not loginReadyAt or GetTime() < loginReadyAt then return false end
-    local firstId, firstName = GetChannelName(1)
-    return type(firstId) == "number" and firstId > 0
-        and type(firstName) == "string" and firstName ~= ""
-        and firstName:lower() ~= hiddenChannelName:lower()
-end
-local sentCount, receivedCount, sendErrors, lastSendError = 0, 0, 0, "none"
-local function PublicSharingEnabled()
-    local settings = Questie and Questie.dbLearner and Questie.dbLearner.global and Questie.dbLearner.global.settings
-    return not settings or settings.learnerPublicChannelEnabled ~= false
-end
-local function EnsureLearnerChannel()
-    if not PublicSharingEnabled() or type(GetChannelName) ~= "function" then return 0 end
-    local id = GetChannelName(hiddenChannelName)
-    if type(id) == "number" and id > 0 then return id end
-    local now = GetTime()
-    if SafeToJoin() and type(JoinChannelByName) == "function" and now - lastJoinAttempt >= joinCooldown then
-        lastJoinAttempt = now
-        JoinChannelByName(hiddenChannelName)
-    end
-    return 0
-end
-local function IsSharedChannel(channelId, channelName)
-    local id = EnsureLearnerChannel()
-    if id <= 0 then return false end
-    if tonumber(channelId) == id then return true end
-    if type(channelName) == "string" then
-        local normalized = channelName:gsub("^%s*%d+%.%s*", ""):gsub("^%s+", ""):gsub("%s+$", "")
-        return normalized:lower() == hiddenChannelName:lower()
-    end
-    return false
-end
-
+local hiddenChannelName = "questiecomm"
 local ProtocolVersion = 2 -- Increment protocol version for enhanced/sanitized data
 
 local time = time
@@ -214,8 +169,15 @@ function QuestieLearnerComms:Initialize()
         QuestieLearnerComms:OnCommReceived(prefix, message, distribution, sender)
     end)
     
-    -- Sharing is on by default; any enabled addon may join BBLC25C.
-    _hiddenChannelId = EnsureLearnerChannel()
+    -- Setup Hidden Channel
+    local channelId, channelName = GetChannelName(hiddenChannelName)
+    if channelId == 0 then
+        JoinPermanentChannel(hiddenChannelName, nil, DEFAULT_CHAT_FRAME:GetID(), 1)
+        ChatFrame_RemoveChannel(DEFAULT_CHAT_FRAME, hiddenChannelName)
+        DebugLog("CRITICAL", "Joined hidden data-sharing channel: " .. hiddenChannelName)
+    end
+    -- Cache for use in ProcessQueues (avoids GetChannelName every tick)
+    _hiddenChannelId = GetChannelName(hiddenChannelName) or 0
 
     -- Process incoming/outgoing queues 
     QuestieCompat.C_Timer.NewTicker(0.5, function() _QuestieLearnerComms:ProcessQueues() end)
@@ -254,9 +216,7 @@ end
 
 function QuestieLearnerComms:BroadcastLearnedData(op, entityType, entityId, data)
     local commsEnabled = GetCommsTuning()
-    if not commsEnabled or not PublicSharingEnabled() then return end
-    -- Allow local learned data to queue while the shared channel reconnects.
-    EnsureLearnerChannel()
+    if not commsEnabled then return end
     if not data or type(data) ~= "table" then return end
     
     -- 1. Create Payload (sanitize data to remove functions before serialization)
@@ -289,7 +249,7 @@ end
 
 function _QuestieLearnerComms:QueueMessage(encodedMessage)
     local commsEnabled = GetCommsTuning()
-    if not commsEnabled or not PublicSharingEnabled() then return end
+    if not commsEnabled then return end
     rateLimitQueueTail = rateLimitQueueTail + 1
     rateLimitQueue[rateLimitQueueTail] = encodedMessage
 end
@@ -300,11 +260,7 @@ function _QuestieLearnerComms:ProcessQueues()
     tokenRefillRate = bucketCapacity / bucketWindow
     minChatInterval = tunedMinChatInterval
     currentTokens = math_min(bucketCapacity, currentTokens)
-    if not commsEnabled or not PublicSharingEnabled() then
-        rateLimitQueue = {}
-        rateLimitQueueHead, rateLimitQueueTail = 1, 0
-        return
-    end
+    if not commsEnabled then return end
 
     -- 1. Refill Tokens
     local now = GetTime()
@@ -314,9 +270,6 @@ function _QuestieLearnerComms:ProcessQueues()
 
     -- 2. Drain Outgoing Queue
     if rateLimitQueueHead <= rateLimitQueueTail and currentTokens >= 1 and (now - lastChatMessageTime) >= minChatInterval then
-        -- LootCollector may join after login; hold queued data until it is available.
-        _hiddenChannelId = EnsureLearnerChannel()
-        if _hiddenChannelId > 0 then
         local msg = rateLimitQueue[rateLimitQueueHead]
         rateLimitQueue[rateLimitQueueHead] = nil
         rateLimitQueueHead = rateLimitQueueHead + 1
@@ -327,21 +280,14 @@ function _QuestieLearnerComms:ProcessQueues()
         currentTokens = currentTokens - 1
         lastChatMessageTime = now
         
-        -- EncodeForPrint may contain WoW chat escape markers. Escape pipes on
-        -- transport and restore them on receipt; never send over chat's 255-byte cap.
-        local wire = "QX1:" .. msg:gsub("|", "||")
-        if #wire <= 240 then
-            local ok, err = pcall(SendChatMessage, wire, "CHANNEL", nil, _hiddenChannelId)
-            if ok then sentCount = sentCount + 1 else
-                sendErrors = sendErrors + 1
-                lastSendError = tostring(err):sub(1, 100)
-            end
-        else
-            sendErrors = sendErrors + 1
-            lastSendError = "payload exceeds chat limit"
+        -- Use cached channel ID; refresh lazily if 0 (e.g. after disconnect)
+        if _hiddenChannelId == 0 then
+            _hiddenChannelId = GetChannelName(hiddenChannelName) or 0
+        end
+        if _hiddenChannelId > 0 then
+            SendChatMessage(msg, "CHANNEL", nil, _hiddenChannelId)
         end
         DebugLog("DEVELOP", "Broadcasted message. Tokens left: " .. math_floor(currentTokens))
-        end
     end
 
     -- 3. Process Incoming Queue (Combat Aware)
@@ -364,11 +310,8 @@ local frame = CreateFrame("Frame")
 frame:RegisterEvent("CHAT_MSG_CHANNEL")
 frame:SetScript("OnEvent", function(self, event, msg, sender, _, _, _, _, _, channelId, channelName)
     local commsEnabled = GetCommsTuning()
-    if not commsEnabled or not PublicSharingEnabled() then return end
-    if IsSharedChannel(channelId, channelName) and sender ~= UnitName("player")
-        and type(msg) == "string" and msg:sub(1, 4) == "QX1:" then
-        msg = msg:sub(5):gsub("||", "|")
-        receivedCount = receivedCount + 1
+    if not commsEnabled then return end
+    if channelName == hiddenChannelName and sender ~= UnitName("player") then
         incomingMessageQueueTail = incomingMessageQueueTail + 1
         incomingMessageQueue[incomingMessageQueueTail] = {text = msg, sender = sender}
     end
@@ -376,7 +319,7 @@ end)
 
 function QuestieLearnerComms:OnCommReceived(prefix, message, distribution, sender)
     local commsEnabled = GetCommsTuning()
-    if not commsEnabled or not PublicSharingEnabled() then return end
+    if not commsEnabled then return end
     if prefix == addonPrefix and sender ~= UnitName("player") then
         incomingMessageQueueTail = incomingMessageQueueTail + 1
         incomingMessageQueue[incomingMessageQueueTail] = {text = message, sender = sender}
@@ -423,19 +366,4 @@ function _QuestieLearnerComms:ProcessRawMessage(encodedMsg, sender)
     DebugLog("DEVELOP", "Received " .. tostring(op) .. " " .. tostring(typ) .. " " .. tostring(id) .. " from " .. tostring(sender))
 
     QuestieLearner:HandleNetworkData(typ, id, d, op)
-end
-
--- Minimal diagnostics; no new chat channel or visible frame required.
-SLASH_QUESTIELEARNERSHARE1 = "/questieshare"
-SlashCmdList.QUESTIELEARNERSHARE = function(command)
-    command = (command or ""):lower():match("^%s*(.-)%s*$")
-    local settings = Questie and Questie.dbLearner and Questie.dbLearner.global and Questie.dbLearner.global.settings
-    if command == "on" and settings then settings.learnerPublicChannelEnabled = true
-    elseif command == "off" and settings then settings.learnerPublicChannelEnabled = false end
-    local id = type(GetChannelName) == "function" and GetChannelName(hiddenChannelName) or 0
-    local enabled = PublicSharingEnabled()
-    local pending = math.max(0, rateLimitQueueTail - rateLimitQueueHead + 1)
-    print("Questie-X Learner: sharing=" .. tostring(enabled) .. " channel=" .. tostring(id)
-        .. " sent=" .. sentCount .. " received=" .. receivedCount .. " queued=" .. pending
-        .. " errors=" .. sendErrors .. " lastError=" .. lastSendError)
 end

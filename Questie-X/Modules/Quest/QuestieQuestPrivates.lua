@@ -51,47 +51,6 @@ local function _CountUniqueSpawnPositions(spawns)
     return count
 end
 
--- CoA fix: Auto mode used to swap the database spawns for the learned ones, so a couple of kills left only the
--- places you had killed at on the map. Returns a copy of spawns with the learned points added; a learned point
--- within 2 map units of one already in that zone is left out, so kills next to a database spawn don't double it.
-local function _AddLearnedSpawns(spawns, learnedSpawns)
-    local merged = {}
-    for zoneId, coords in pairs(spawns or {}) do
-        if type(coords) == "table" then
-            local list = {}
-            for i = 1, #coords do
-                list[i] = coords[i]
-            end
-            merged[zoneId] = list
-        end
-    end
-    for zoneId, coords in pairs(learnedSpawns) do
-        if type(coords) == "table" then
-            local list = merged[zoneId] or {}
-            merged[zoneId] = list
-            for _, coord in ipairs(coords) do
-                local x = type(coord) == "table" and tonumber(coord[1])
-                local y = type(coord) == "table" and tonumber(coord[2])
-                if x and y then
-                    local near = false
-                    for _, other in ipairs(list) do
-                        local ox = type(other) == "table" and tonumber(other[1])
-                        local oy = type(other) == "table" and tonumber(other[2])
-                        if ox and oy and math.abs(ox - x) < 2 and math.abs(oy - y) < 2 then
-                            near = true
-                            break
-                        end
-                    end
-                    if not near then
-                        list[#list + 1] = coord
-                    end
-                end
-            end
-        end
-    end
-    return merged
-end
-
 
 ---@class SpawnListBase
 ---@field Name string
@@ -137,8 +96,7 @@ killcredit = function(npcId, objective, objectiveData)
     if objectiveData.IdList then
         for npcIdIndex = 1, #objectiveData.IdList do
             local killCreditNpcId = objectiveData.IdList[npcIdIndex]
-            -- CoA fix: some kill-credit IdLists hold nested lists; comparing those with 0 raised an error
-            if type(killCreditNpcId) == "number" and killCreditNpcId > 0 then
+            if killCreditNpcId and killCreditNpcId > 0 then
                 local monsterResult = monster(killCreditNpcId, objective)
                 if monsterResult and monsterResult[killCreditNpcId] then
                     ret[killCreditNpcId] = monsterResult[killCreditNpcId]
@@ -249,17 +207,13 @@ monster = function(npcId, objective)
                     and QuestieDB.ascensionOverrideKeys["NPC"][npcId][7]
                 local hasReliableLearnedSpawns = _CountUniqueSpawnPositions(learnedSpawns) > 1
                 local staticHasSpawns = spawns and next(spawns) ~= nil
-                -- CoA fix: in Auto mode the learned spawns are added to the database spawns instead of replacing
-                -- them (two kills hid every other spawn point), so they are always usable. isLearned also keeps
-                -- PopulateObjective's zone suppression off the merged list.
-                local canUseLearnerSpawns = dataSourceMode == "auto"
-                    or dataSourceMode == "learner"
+                local canUseLearnerSpawns = dataSourceMode == "learner"
                     or hasReliableLearnedSpawns
                     or not staticHasSpawns
                 if learnedSpawns and next(learnedSpawns) and learnedNpc.mc and learnedNpc.mc >= threshold
                         and canUseLearnerSpawns and not ascProtected then
                     Questie:Debug(Questie.DEBUG_DEVELOP, "[monster] Preferring learned spawns for NPC:", npcId, "(mc=" .. tostring(learnedNpc.mc) .. ")")
-                    spawns = dataSourceMode == "learner" and learnedSpawns or _AddLearnedSpawns(spawns, learnedSpawns)
+                    spawns = learnedSpawns
                     isLearned = true
                 end
             end
@@ -334,13 +288,11 @@ object = function(objectId, objective)
             if learnedObj and learnedObj[4] and next(learnedObj[4]) then
                 local threshold = ld.settings.minConfidencePins or 1
                 local staticHasSpawns = spawns and next(spawns) ~= nil
-                -- CoA fix: as for monsters, Auto mode adds the learned spawns to the database ones
-                local canUseLearnerSpawns = dataSourceMode == "auto"
-                    or dataSourceMode == "learner"
+                local canUseLearnerSpawns = dataSourceMode == "learner"
                     or _CountUniqueSpawnPositions(learnedObj[4]) > 1
                     or not staticHasSpawns
                 if learnedObj.mc and learnedObj.mc >= threshold and canUseLearnerSpawns then
-                    spawns = dataSourceMode == "learner" and learnedObj[4] or _AddLearnedSpawns(spawns, learnedObj[4])
+                    spawns = learnedObj[4]
                     isLearned = true
                 end
             end

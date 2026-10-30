@@ -589,7 +589,7 @@ function QuestieOptions.tabs.database:Initialize()
                     return "|cFF888888Want to help grow the Questie-X database?\n\n" ..
                            "1. Click |r|cFFFFFFFFExport Current Server|r|cFF888888 above.\n" ..
                            "2. Copy the full export string (Ctrl+A then Ctrl+C in the dialog).\n" ..
-                           "3. Open a new GitHub issue at |r|cFF5EBAF3github.com/downingwow/Questie-X/issues|r|cFF888888 titled: |r|cFFFFFFFF[Data Submission] <Server Name>|r|cFF888888\n" ..
+                           "3. Open a new GitHub issue at |r|cFF5EBAF3github.com/Xurkon/Questie-X/issues|r|cFF888888 titled: |r|cFFFFFFFF[Data Submission] <Server Name>|r|cFF888888\n" ..
                            "4. Paste the string into the issue body and submit.\n\n" ..
                            "Submissions are reviewed and merged into the official database. Thank you for contributing!|r"
                 end,

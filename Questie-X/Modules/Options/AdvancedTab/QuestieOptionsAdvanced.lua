@@ -377,16 +377,6 @@ function QuestieOptions.tabs.advanced:Initialize()
                     QuestieOptions:ClusterRedraw()
                 end,
             },
-            learnerPublicChannelEnabled = {
-                type = "toggle",
-                order = 2.59,
-                name = "Enable shared Learner data (BBLC25C)",
-                desc = "ON by default. Independently joins or reuses BBLC25C; never leaves or rearranges channels. /questieshare shows status and sent/received counters. Local learning always continues.",
-                get = function() return GetLearnerSettings().learnerPublicChannelEnabled ~= false end,
-                set = function(_, value)
-                    GetLearnerSettings().learnerPublicChannelEnabled = value == true
-                end,
-            },
             learnerCommsIntensity = {
                 type = "select",
                 order = 2.6,
@@ -665,7 +655,7 @@ function QuestieOptions.tabs.advanced:Initialize()
             github_text = {
                 type = "description",
                 order = 4.8,
-                name = function() return Questie:Colorize(l10n('Questie-X CoA is maintained by Uncle Bone. Updates and issue reports: (( https://github.com/downingwow/Questie-X ))'), '87CEEB'); end,
+                name = function() return Questie:Colorize(l10n('Questie-X is under active development and being maintained by Xurkon. Please check my GitHub for the latest build or to report issues. (( https://github.com/Xurkon/Questie-X ))'), '87CEEB'); end,
                 fontSize = "medium",
             },
             HeaderDev = {

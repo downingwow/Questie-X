@@ -1,9 +1,5 @@
 {
-  "version": "v1.0.0",
-  "prerelease": false,
-  "folders": [
-    "Questie-X",
-    "Questie-X-WotLKDB",
-    "Questie-X-AscensionDB"
-  ]
+  "version": "v1.6.4",
+  "prerelease": true,
+  "folders": ["Questie-X", "Questie-X-WotLKDB", "Questie-X-AscensionDB"]
 }
