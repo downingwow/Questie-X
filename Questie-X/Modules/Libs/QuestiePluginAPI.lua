@@ -47,10 +47,30 @@ local function _IsAscensionProtected(dbType, id, key)
     return protected and protected[key] == true
 end
 
+-- Share single-field protection sets; copy on write before adding a second field.
+-- This reduces per-record table allocations for sparse Ascension overrides.
+local singletonProtection = {}
+local singletonOwners = {}
 local function _ProtectAscensionField(dbType, id, key)
     local protectedByType = _GetAscensionProtection(dbType)
-    protectedByType[id] = protectedByType[id] or {}
-    protectedByType[id][key] = true
+    local fields = protectedByType[id]
+    if not fields then
+        local shared = singletonProtection[key]
+        if not shared then
+            shared = {[key] = true}
+            singletonProtection[key] = shared
+            singletonOwners[shared] = true
+        end
+        protectedByType[id] = shared
+    elseif not fields[key] then
+        if singletonOwners[fields] then
+            local own = {}
+            for field, value in pairs(fields) do own[field] = value end
+            fields = own
+            protectedByType[id] = fields
+        end
+        fields[key] = true
+    end
 end
 
 local function _MergeEntry(target, id, entry, sourceName, dbType)
