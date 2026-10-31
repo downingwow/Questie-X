@@ -49,7 +49,7 @@ function QuestieMap.utils:SetDrawOrder(frame)
     else
 	    -- If Magnify-WotLK is loaded, parent to WorldMapButton instead of WorldMapFrame
         local parent = WorldMapFrame
-        if IsAddOnLoaded and IsAddOnLoaded("Magnify-WotLK") and _G.WorldMapButton then
+        if _G.WorldMapButton and IsAddOnLoaded and (IsAddOnLoaded("Magnify-WotLK") or IsAddOnLoaded("Leatrix_Maps") or IsAddOnLoaded("DragonUI")) then
             parent = WorldMapButton
         end
         local frameLevel = WorldMapFrame:GetFrameLevel() + 7

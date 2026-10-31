@@ -30,9 +30,9 @@ local coaMaps = {
 	[1242] = { [1] = 1818.700, [2] = 1212.500, [3] = -12814.600, [4] = -3604.170, instance = 530, mapID = 1242, name = "Ammen Vale", mapType = 3, parentMapID = 10142 }, -- ammenvalestart
 	[2032] = { [1] = -123.000, [2] = 195.000, [3] = 4890.000, [4] = -6813.000, instance = 1, mapID = 2032, name = "Xorthal's Lair", mapType = 3, parentMapID = 5366 }, -- Xorthal's Lair
 	[2040] = { [1] = 743.290, [2] = 495.530, [3] = 2795.240, [4] = -4408.890, instance = 1, mapID = 2040, name = "Depthbreaker's Hollow", mapType = 3, parentMapID = 10239 }, -- DepthbreakerHollow
-	[2063] = { [1] = 3631.870, [2] = 2421.250, [3] = 2214.230, [4] = -6003.880, instance = 0, mapID = 2063, name = "Pale Reach", mapType = 3, parentMapID = 10302 }, -- Scadeald
-	[2064] = { [1] = 5097.130, [2] = 3398.080, [3] = 4010.910, [4] = -3244.710, instance = 0, mapID = 2064, name = "Druk'Thar", mapType = 3, parentMapID = 10292 }, -- Palehorn
-	[2067] = { [1] = 801.972, [2] = 534.640, [3] = 154.441, [4] = -6307.520, instance = 0, mapID = 2067, name = "Dun Kazad", mapType = 3, parentMapID = 10306 }, -- DunKazad
+	[2063] = { [1] = 3631.870, [2] = 2421.250, [3] = 2214.230, [4] = -6003.880, instance = 0, mapID = 2063, name = "Pale Reach", mapType = 3, areaID = 10302, parentMapID = 1415 }, -- Scadeald
+	[2064] = { [1] = 5097.130, [2] = 3398.080, [3] = 4010.910, [4] = -3244.710, instance = 0, mapID = 2064, name = "Druk'Thar", mapType = 3, areaID = 10292, parentMapID = 1415 }, -- Palehorn
+	[2067] = { [1] = 801.972, [2] = 534.640, [3] = 154.441, [4] = -6307.520, instance = 0, mapID = 2067, name = "Dun Kazad", mapType = 3, areaID = 10306, parentMapID = 2063 }, -- DunKazad
 }
 
 local merged = {}

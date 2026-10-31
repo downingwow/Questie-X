@@ -771,8 +771,8 @@ function _QuestEventHandler:OnEvent(event, ...)
         --   1) Immediate scan (catches single-item normal loots and is fast).
         --   2) Debounce rapid fires to at most one extra scan per 0.3s burst.
         --   3) Always schedule a follow-up scan 2 s later so the server counter has time to catch up.
-        doFullQuestLogScan = true
-        _QuestEventHandler:QuestLogUpdate()
+        -- CoA: a full scan for every bag event causes hitching during rapid loot.
+        -- The debounced scan below handles the burst; the 2s follow-up remains.
 
         -- Cancel any pending debounce timer so rapid fires collapse into one.
         if _bagUpdateDebounceTimer then

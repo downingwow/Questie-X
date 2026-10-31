@@ -1,0 +1,7 @@
+## Interface: 30300
+## Title: Questie-X WotLK Language Data (on-demand)
+## Notes: Automatically loaded for non-enUS clients
+## Version: 1.6.7
+## LoadOnDemand: 1
+## Dependencies: Questie-X, Questie-X-WotLKDB
+Localization\lookups\Wotlk\AllLookups.xml

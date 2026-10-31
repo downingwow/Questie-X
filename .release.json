@@ -1,5 +1,12 @@
 {
-  "version": "v1.6.4",
+  "version": "v1.6.8",
   "prerelease": true,
-  "folders": ["Questie-X", "Questie-X-WotLKDB", "Questie-X-AscensionDB"]
+  "folders": [
+    "Questie-X",
+    "Questie-X-AscensionDB",
+    "Questie-X-CoADB",
+    "Questie-X-WotLKDB",
+    "Questie-X-WotLK-Locale"
+  ],
+  "extras": []
 }

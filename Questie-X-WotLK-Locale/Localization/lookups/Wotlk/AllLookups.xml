@@ -1,0 +1,6 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+  <Include file="lookupItems/lookupItems.xml"/>
+  <Include file="lookupNpcs/lookupNpcs.xml"/>
+  <Include file="lookupObjects/lookupObjects.xml"/>
+  <Include file="lookupQuests/lookupQuests.xml"/>
+</Ui>

@@ -88,6 +88,25 @@ local function registerAndInject()
     end
 
     print("|cFF5EBAF3Questie|r|cFFDAFAFD-X|r [WotLKDB] Data injection complete.")
+    -- The plugin API has already merged every record into QuestieDB's override
+    -- tables. Do not retain four additional top-level index tables through the
+    -- addon namespace and global bridge. Individual records remain referenced
+    -- by QuestieDB; no quest, NPC, object, or item entries are discarded.
+    addonTable.npcData, addonTable.itemData = nil, nil
+    addonTable.objectData, addonTable.questData = nil, nil
+    _G.QuestieX_WotLKDB_npc, _G.QuestieX_WotLKDB_item = nil, nil
+    _G.QuestieX_WotLKDB_object, _G.QuestieX_WotLKDB_quest = nil, nil
+
+    -- Language-specific lookup files are an optional on-demand addon. The
+    -- English client needs none of these large compiled Lua chunks.
+    local locale = GetLocale and GetLocale() or "enUS"
+    if locale ~= "enUS" and LoadAddOn then
+        local ok, reason = LoadAddOn("Questie-X-WotLK-Locale")
+        if not ok then
+            print("|cFFFFAA00[Questie-X] WotLK translations unavailable: " .. tostring(reason) .. "|r")
+        end
+    end
+
     plugin:FinishLoading("WotLKDB")
     return true
 end

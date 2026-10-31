@@ -258,7 +258,10 @@ end
 
 -- Position cache: avoid hammering the C API more than 20 times per second.
 -- These are invalidated on zone-change events below.
-local _pos_cache_interval = 0.05
+-- CoA fix: 0.1 (was 0.05). Each refresh calls SetMapToCurrentZone, which is slow and fires WORLD_MAP_UPDATE
+-- for every addon listening; the arrow needle polls every 0.05 s, so this halves those calls and still
+-- updates its direction 10 times a second.
+local _pos_cache_interval = 0.1
 local _pzp_x, _pzp_y, _pzp_mapID, _pzp_time = nil, nil, nil, 0
 local _pwp_x, _pwp_y, _pwp_inst, _pwp_time = nil, nil, nil, 0
 
@@ -885,9 +888,13 @@ end
 local function UpdateWorldMap()
     if not WorldMapFrame:IsVisible() then return end
 
-    local scale = WorldMapButton:GetScale()
-    worldmapWidth  = WorldMapButton:GetWidth()*scale
-    worldmapHeight = WorldMapButton:GetHeight()*scale
+    -- Pins are parented to WorldMapButton; its local coordinate space is
+    -- already scaled by the map. Applying GetScale again doubles zoom.
+    worldmapWidth  = WorldMapButton:GetWidth()
+    worldmapHeight = WorldMapButton:GetHeight()
+    if WorldMapButton.SetClipsChildren then
+        WorldMapButton:SetClipsChildren(true)
+    end
 
     local mapScale = QuestieMap.GetScaleValue()
 
@@ -1166,7 +1173,7 @@ function pins:AddWorldMapIconMap(ref, icon, uiMapID, x, y, showFlag, frameLevel)
     worldmapPins[icon] = t
 
     icon.icon = icon --LOL!
-    icon:SetParent(WorldMapDetailFrame or WorldMapButton or WorldMapFrame)
+    icon:SetParent(WorldMapButton)
     HandleWorldMapPin(icon, t)
 end
 
@@ -1182,7 +1189,7 @@ function pins:RemoveWorldMapIcon(ref, icon)
     end
     icon:Hide()
     icon:ClearAllPoints()
-    icon:SetParent(UiParent)
+    icon:SetParent(UIParent)
 end
 
 --- Remove all worldmap icons belonging to your addon (as tracked by "ref")
@@ -1194,7 +1201,7 @@ function pins:RemoveAllWorldMapIcons(ref)
         worldmapPins[icon] = nil
         icon:Hide()
         icon:ClearAllPoints()
-        icon:SetParent(UiParent)
+        icon:SetParent(UIParent)
     end
     wipe(worldmapPinRegistry[ref])
 end

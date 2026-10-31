@@ -377,6 +377,16 @@ function QuestieOptions.tabs.advanced:Initialize()
                     QuestieOptions:ClusterRedraw()
                 end,
             },
+            learnerPublicChannelEnabled = {
+                type = "toggle",
+                order = 2.59,
+                name = "Enable shared Learner data (BBLC25C)",
+                desc = "ON by default. Independently joins or reuses BBLC25C; never leaves or rearranges channels. /questieshare shows status and sent/received counters. Local learning always continues.",
+                get = function() return GetLearnerSettings().learnerPublicChannelEnabled ~= false end,
+                set = function(_, value)
+                    GetLearnerSettings().learnerPublicChannelEnabled = value == true
+                end,
+            },
             learnerCommsIntensity = {
                 type = "select",
                 order = 2.6,

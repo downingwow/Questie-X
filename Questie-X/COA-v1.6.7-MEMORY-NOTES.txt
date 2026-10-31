@@ -1,0 +1,6 @@
+Questie-X CoA v1.6.7 memory test
+- WotLK localization files moved into an on-demand language addon. enUS clients no longer parse 36 large foreign-language Lua files at startup.
+- Other locales auto-load their original lookup data.
+- Release redundant WotLK raw table index references after database injection (records remain in QuestieDB overrides).
+- Full Vanilla/TBC/Wrath/CoA data retained.
+- Test in-game for memory savings and quest/map functionality; not benchmarked.

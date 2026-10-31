@@ -35,10 +35,6 @@ Database\Corrections\wotlkItemFixes.lua
 Database\Corrections\wotlkObjectFixes.lua
 
 # Localization lookups
-Localization\lookups\Wotlk\lookupItems\lookupItems.xml
-Localization\lookups\Wotlk\lookupNpcs\lookupNpcs.xml
-Localization\lookups\Wotlk\lookupObjects\lookupObjects.xml
-Localization\lookups\Wotlk\lookupQuests\lookupQuests.xml
 
 # Plugin loader (must be last)
 Loader.lua
